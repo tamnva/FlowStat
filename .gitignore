@@ -47,3 +47,5 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+/data/lstm_data
+data/de_sim_discharge.csv
