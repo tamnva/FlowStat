@@ -1,17 +1,7 @@
 library(leaflet)
 
-# Choices for drop-downs
-vars <- c(
-  "Is SuperZIP?" = "superzip",
-  "Centile score" = "centile",
-  "College education" = "college",
-  "Median income" = "income",
-  "Population" = "adultpop"
-)
-
-
 navbarPage(
-  "Point & Diffuse N sources", 
+  "Near-Real-Time Streamflow Statistics", 
   id="nav",
   
 
@@ -48,7 +38,6 @@ navbarPage(
         cursor = "auto",
         
         h4("Visualization"),
-        verbatimTextOutput("clicked_name"),
         
         # Select countries
         selectInput("country", 
@@ -65,6 +54,8 @@ navbarPage(
         
         plotlyOutput("input_data", height = 200),
         plotlyOutput("output_data", height = 200),
+        
+        verbatimTextOutput("clicked_name"),
       )
     )
   ),

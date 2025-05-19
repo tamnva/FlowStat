@@ -4,7 +4,7 @@ set.seed(100)
 
 function(input, output, session) {
 
-  ## Interactive Map ###########################################
+  # Interactive Map 
 
   # Create the map
   output$map <- renderLeaflet({
@@ -20,9 +20,9 @@ function(input, output, session) {
         group = "WorldImagery") %>%
       addLayersControl(
         baseGroups = c(
+          "OpenTopoMap",
           "OpenStreetMap", 
-          "WorldImagery",
-          "OpenTopoMap"
+          "WorldImagery"
         ),
         overlayGroups = c("Subbasin", "Station", "Main basin"),
         options = layersControlOptions(collapsed = TRUE, 
@@ -33,21 +33,6 @@ function(input, output, session) {
 
   
   observe({
-
-#    if (input$c_type == "N-NO3 (wihout point sources)"){
-#      icol <- 5
-#    } else {
-#      icol <- 6
-#    }
-#    
-#    irow <- which(data[["10"]]$year == input$select_year )
-#    
-#    radius <- c()
-#    
-#    for (i in data[["stations"]]$object_id){
-#      radius <- c(radius, as.numeric(data[[as.character(i)]][irow, icol]))
-#      
-#    }
     
     #radius <- period_mean(data, NA)$percentiles
     #print(radius)
