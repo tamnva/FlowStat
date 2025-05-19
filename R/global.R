@@ -1,4 +1,8 @@
 
+
+
+# check DEE10600
+
 library(sf)
 library(leaflet)
 library(ggplot2)
@@ -10,21 +14,13 @@ library(fasstr)
 library(lubridate)
 library(RColorBrewer)
 
-
-
-
 # Remove this
-setwd("C:/Users/nguyenta/Documents/GitHub/StreamFlowTracking")
+setwd("C:/Users/nguyenta/Documents/GitHub/FlowStat")
 
 stations <- read_sf(file.path("data", "de_stations.shp")) 
 basins <- read_sf(file.path("data", "de_basins.shp")) 
 Q_data <- as_tibble(fread(file.path("data", "de_sim_discharge.csv")))
 Q_data$date <- as.Date(Q_data$date)
-
-qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
-col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
-
-pcolor <- sample(col_vector, nrow(stations), replace = TRUE)
 
 # Function to plot daily statistics
 #------------------------------------------------------------------------------#
@@ -126,14 +122,16 @@ daily_stat <- function(input_data, gaugeid){
 #------------------------------------------------------------------------------#
 #                               perod statistics                               #
 #------------------------------------------------------------------------------#
-#period <- c(as.Date("2025-04-01"), as.Date("2025-04-30"))
-#Q_input <- Q_data
-#gauge_id <- stations$gauge_id
+period <- c(as.Date("2025-04-01"), as.Date("2025-04-30"))
+Q_input <- Q_data
+gauge_id <- stations$gauge_id
 
-#period_stat_value <- period_stat(Q_data, 
-#                                 c(as.Date("2025-04-01"), as.Date("2025-04-30")), 
-#                                 stations$gauge_id)
+period_stat_value <- period_stat(Q_data, 
+                                 c(as.Date("2025-04-01"), as.Date("2025-04-30")), 
+                                 stations$gauge_id)
 
+pcolor <- period_stat_value$color
+  
 period_stat <- function(Q_input, period, gauge_id){
   
   Q_input_period <- Q_input %>%
@@ -172,11 +170,21 @@ period_stat <- function(Q_input, period, gauge_id){
 #    #  limits = c(0,100)
 #    #) +
 #    theme_bw()
+  
+  quantiles <- quantiles %>%
+    mutate(color = case_when(
+      quantiles <= 10 ~ "#D33F6A",
+      quantiles <= 25 ~ "#E69F00",
+      quantiles <= 50 ~ "#C1E9C1",
+      quantiles <= 75 ~ "#C1E9C1",
+      quantiles <= 100 ~ "#023903"))
 
   return(quantiles)
 }
 
 
 
-
-
+#"#000000" "#E69F00" "#56B4E9" "#009E73" "#F0E442" "#0072B2" "#D55E00" "#CC79A7" "#999999"
+#"#492050" "#90529C" "#C490CF" "#E4CAE9" "#F1F1F1" "#BCDABC" "#72B173" "#2C792D" "#023903"
+#"#4A6FE3" "#788CE1" "#9DA8E2" "#C0C5E3" "#E2E2E2" "#E6BCC3" "#E495A5" "#DD6D87" "#D33F6A"
+#"#841859" "#D05196" "#F398C4" "#FFD0E8" "#F6F6F6" "#C1E9C1" "#7CC57D" "#129416" "#005600"

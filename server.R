@@ -11,17 +11,18 @@ function(input, output, session) {
     leaflet() %>%
       addProviderTiles(
         providers$OpenTopoMap,
-        options = providerTileOptions(opacity = 0.5),
+        options = providerTileOptions(opacity = 1),
         group = "OpenTopoMap") %>%
-      addTiles(group = "OpenStreetMap") %>%
+      addTiles(options = providerTileOptions(opacity = 1),
+               group = "OpenStreetMap") %>%
       addProviderTiles(
         providers$Esri.WorldImagery,
-        options = providerTileOptions(opacity = 0.5),
+        options = providerTileOptions(opacity = 1),
         group = "WorldImagery") %>%
       addLayersControl(
         baseGroups = c(
+          "OpenStreetMap",
           "OpenTopoMap",
-          "OpenStreetMap", 
           "WorldImagery"
         ),
         overlayGroups = c("Subbasin", "Station", "Main basin"),
@@ -39,19 +40,14 @@ function(input, output, session) {
     
     leafletProxy("map") %>%
       clearShapes() %>%
-#      addPolygons(data = data[["main_basin"]],
-#                  group = "Main basin",
-#                  stroke = TRUE,
-#                  fillOpacity = 0,
-#                  weight = 2) %>%
       addCircleMarkers(data = stations,
                  lng = st_coordinates(stations)[,1],
                  lat = st_coordinates(stations)[,2],
-                 radius = 4,
+                 radius = 3,
                  group = "Station",
                  fillColor = pcolor,
                  color = pcolor,
-                 fillOpacity = 0.5,
+                 fillOpacity = 0.8,
                  stroke = FALSE,
                  popup = ~gauge_name,
                  layerId = ~gauge_id
@@ -59,9 +55,7 @@ function(input, output, session) {
     
     output$clicked_name <- renderPrint({
       click <- input$map_marker_click
-      
       print(click)
-   
     })
     
   })
