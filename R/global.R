@@ -29,7 +29,7 @@ Q_data$date <- as.Date(Q_data$date)
 #------------------------------------------------------------------------------#
 daily_stat <- function(input_data, gaugeid){
   #input_data <- Q_data
-  #gaugeid <-  "DE210480" 
+  #gaugeid <-  "DEA11100" 
   Q_gauge_id <- input_data %>% 
     filter(gauge_id == gaugeid)
   
@@ -122,16 +122,6 @@ daily_stat <- function(input_data, gaugeid){
 #------------------------------------------------------------------------------#
 #                               perod statistics                               #
 #------------------------------------------------------------------------------#
-period <- c(as.Date("2025-04-01"), as.Date("2025-04-30"))
-Q_input <- Q_data
-gauge_id <- stations$gauge_id
-
-period_stat_value <- period_stat(Q_data, 
-                                 c(as.Date("2025-04-01"), as.Date("2025-04-30")), 
-                                 stations$gauge_id)
-
-pcolor <- period_stat_value$color
-  
 period_stat <- function(Q_input, period, gauge_id){
   
   Q_input_period <- Q_input %>%
@@ -182,8 +172,19 @@ period_stat <- function(Q_input, period, gauge_id){
   return(quantiles)
 }
 
+#period <- c(as.Date("2025-04-01"), as.Date("2025-04-30"))
+#Q_input <- Q_data
+#gauge_id <- stations$gauge_id
 
+#period_stat_value <- period_stat(Q_data, 
+#                                 c(as.Date("2025-04-01"), as.Date("2025-04-30")), 
+#                                 stations$gauge_id)
 
+#pcolor <- period_stat_value$color
+
+#"DEA11100"
+#"77.81109"
+#"#023903"
 #"#000000" "#E69F00" "#56B4E9" "#009E73" "#F0E442" "#0072B2" "#D55E00" "#CC79A7" "#999999"
 #"#492050" "#90529C" "#C490CF" "#E4CAE9" "#F1F1F1" "#BCDABC" "#72B173" "#2C792D" "#023903"
 #"#4A6FE3" "#788CE1" "#9DA8E2" "#C0C5E3" "#E2E2E2" "#E6BCC3" "#E495A5" "#DD6D87" "#D33F6A"
