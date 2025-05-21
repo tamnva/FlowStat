@@ -51,7 +51,7 @@ navbarPage(
                  condition = "input.spatial_setting == 1",
                  column(width = 10,
                         selectInput("select_country", 
-                                    "Country", 
+                                    "1. Select Country", 
                                     list("Germany",
                                          "Switzerland",
                                          "France")),
@@ -64,7 +64,7 @@ navbarPage(
                  # Select last n simulation dates
                  column(width = 10,
                         selectInput("station_visual", 
-                                    "Station coloring by", 
+                                    "2. Select station coloring scheme by", 
                                     list("NSE",
                                          "Q daily mean period")),
                  ),
@@ -77,12 +77,13 @@ navbarPage(
                    condition = "input.station_visual.includes('Q daily mean period')",
                    column(width = 10,
                           dateRangeInput("date_range", 
-                                         "Select date range",
+                                         "3. Select date range",
                                          start = "2015-04-01", 
                                          end = "2015-05-18"),
                    ),
                    column(width = 10,
-                          actionButton("calculate2", "Apply"),
+                          h5("4. Visualize"),
+                          actionButton("calculate2", "Click here"),
                    )
                  ),
                ),
@@ -90,13 +91,16 @@ navbarPage(
         
         
         # Temporal visualization for selected gaug
-        checkboxInput('spatial_setting', 'Temporal visualization settings (single selected gauge)', 
+        checkboxInput('temporal_setting', 'Temporal visualization settings (single selected gauge)', 
                       value = 1, width = "100%"),
         
         column(width = 12,
-               plotlyOutput("input_data", height = 200),
+               conditionalPanel(
+                 condition = "input.temporal_setting == 1",
+                 plotlyOutput("input_data", height = 200),
+               ),
         ),
-      )
-    )
+      ),
+    ),
   ),
 )
