@@ -45,18 +45,19 @@ function(input, output, session) {
       
     } else if (input$station_visual == "Q daily mean period"){
     
-      pal <- colorNumeric(palette = "PiYG", 
-                          domain = c(0,100), 
-                          na.color = "#ffffff")
+      pal <- colorBin(
+          palette = c("#D01C8B", "#F1B6DA", "#F7F7F7", "#B8E186", "#4DAC26"),
+          bins = c(0, 10, 25, 75, 90, 100)        
+        )
       
       period <- c(as.Date("2025-04-01"), as.Date("2025-04-30"))
       gauge_id <- stations$gauge_id
       
-      #period_stat_value <- period_stat(Q_data, 
-      #                                 input$date_range, 
-      #                                 stations$gauge_id)
+      period_stat_value <- period_stat(Q_data, 
+                                       input$date_range, 
+                                       stations$gauge_id)
       
-      pcolor <- pal(stations$NSE)#pal(period_stat_value$quantiles)
+      pcolor <- pal(period_stat_value$quantiles)
       ptitle <- "Q daily mean period (percentile)"
       prange <- c(0,100)
       
@@ -132,7 +133,9 @@ function(input, output, session) {
                     group = "Subbasin",
                     stroke = TRUE,
                     weight = 2,
-                    layerId = "basin_shape_id"
+                    layerId = "basin_shape_id",
+                    labels = c("Much below normal", "Below normal", "Normal",
+                               "Above normal", "Much above normal")
         )
       
     })
