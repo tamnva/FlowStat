@@ -35,7 +35,15 @@ function(input, output, session) {
   
   observe({
     
-    #radius <- period_mean(data, NA)$percentiles
+    pal <- colorNumeric(palette = "PiYG", 
+                        domain = c(0,1), 
+                        na.color = "#ffffff")
+    
+    # brewer.pal(n = 11, name = 'PiYG')
+    #pcolor <- period_stat(Q_data,
+    #                      c(as.Date("2025-04-01"),
+    #                        as.Date("2025-04-30")),
+    #                      stations$gauge_id)$color
     #print(radius)
     
     leafletProxy("map") %>%
@@ -45,16 +53,19 @@ function(input, output, session) {
                  lat = st_coordinates(stations)[,2],
                  radius = 3,
                  group = "Station",
-                 #fillColor = period_stat(Q_data,
-                 #                        c(as.Date("2025-04-01"), 
-                 #                          as.Date("2025-04-30")),
-                 #                        stations$gauge_id)$color,
-                 #color = pcolor,
+                 fillColor = ~pal(ifelse(NSE < 0, 0, NSE)),
+                 #color = pcolor$color,
                  fillOpacity = 0.8,
                  stroke = FALSE,
-                 popup = ~gauge_name,
+                 popup = ~ paste0(gauge_name, "; NSE = ", round(NSE,2), 
+                                  "; Area (skm) = ", round(are_skm, 1)),
                  layerId = ~gauge_id
-      ) 
+      ) %>%
+      addLegend(position = "bottomleft", 
+                pal = pal,
+                values = c(0,1),
+                title = "NSE",
+                opacity = 1)
     
     output$clicked_name <- renderPrint({
       click <- input$map_marker_click
@@ -62,8 +73,6 @@ function(input, output, session) {
     })
     
   })
-  
-
 
   
   # Show a popup at the given location

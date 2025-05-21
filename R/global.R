@@ -10,17 +10,19 @@ library(shiny)
 library(dplyr)
 library(data.table)
 library(plotly)
-library(fasstr)
 library(lubridate)
-library(RColorBrewer)
+#library(RColorBrewer)
 
 # Remove this
 setwd("C:/Users/nguyenta/Documents/GitHub/FlowStat")
 
 stations <- read_sf(file.path("data", "de_stations.shp")) 
 basins <- read_sf(file.path("data", "de_basins.shp")) 
+#rivers <- read_sf(file.path("data", "de_rivers.shp")) 
+#rivers <- st_geometry(st_transform(rivers, crs(basins)))
 Q_data <- as_tibble(fread(file.path("data", "de_sim_discharge.csv")))
 Q_data$date <- as.Date(Q_data$date)
+
 
 # Function to plot daily statistics
 #------------------------------------------------------------------------------#
