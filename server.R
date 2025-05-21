@@ -32,7 +32,6 @@ function(input, output, session) {
       setView(lng = 9, lat = 50, zoom = 4)
   })
 
-  
   observe({
     
     if(input$station_visual == "NSE"){

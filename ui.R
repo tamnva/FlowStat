@@ -18,7 +18,8 @@ navbarPage(
       ),
       
       # If not using custom CSS, set height of leafletOutput to a number instead of percent
-      
+      add_busy_spinner(spin = "fading-circle", position = "top-left", 
+                       margins = c(70, 70)),
       
       leafletOutput("map", 
                     width="100%", 
@@ -39,23 +40,36 @@ navbarPage(
         height = "auto",
         cursor = "auto",
         
-        h4("Visualization"),
+        h4(" "),
         
         
         # Select countries
-        selectInput("select_country", 
-                    "Country", 
-                    list("Germany",
-                         "Switzerland",
-                         "France")),
-        add_busy_spinner(spin = "fading-circle", position = "top-left", 
-                         margins = c(70, 70)),
+        
+
+        column(width = 10,
+               selectInput("select_country", 
+                           "Country", 
+                           list("Germany",
+                                "Switzerland",
+                                "France")),
+        ),
+        column(width = 2,
+               actionButton("help_country", "?", style = "margin-top: 25px;"),
+        ),
+        
+
         
         # Select last n simulation dates
-        selectInput("station_visual", 
-                    "Station coloring by", 
-                    list("NSE",
-                         "Q mean period")),
+        column(width = 10,
+               selectInput("station_visual", 
+                           "Station coloring by", 
+                           list("NSE",
+                                "Q daily mean period")),
+        ),
+        column(width = 2,
+               actionButton("help_station", "?", style = "margin-top: 25px;"),
+        ),
+        
         
         dateRangeInput("date_range", 
                        "Date range",
