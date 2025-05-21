@@ -35,13 +35,11 @@ function(input, output, session) {
   observe({
     
     if(input$station_visual == "NSE"){
-      prange <- c(0,1)
-      pal <- colorNumeric(palette = "PiYG", 
-                          domain = prange, 
-                          na.color = "#ffffff")
-      
-      pcolor <- pal(ifelse(stations$NSE < 0, 0, stations$NSE))
+      color <- c("#F1B6DA", "#B8E186",  "#4D9221", "#276419")
+      pcolor <- colorBin(palette = color, bins = c(0.0, 0.5, 0.65, 0.75, 1.0))
+      pcolor <- pcolor(ifelse(stations$NSE < 0, 0, stations$NSE))
       ptitle <- "NSE"
+      plabels <- c("Unsatisfactory", "Satisfactory", "Good", "Very good")
       
     } else if (input$station_visual == "Q daily mean period"){
     
@@ -66,7 +64,7 @@ function(input, output, session) {
     }
     
     leafletProxy("map") %>%
-      clearShapes() %>%
+      #clearShapes() %>%
       addCircleMarkers(data = stations,
                  lng = st_coordinates(stations)[,1],
                  lat = st_coordinates(stations)[,2],
@@ -79,13 +77,12 @@ function(input, output, session) {
                                   "; Area (skm) = ", round(are_skm, 1)),
                  layerId = ~gauge_id
       ) %>%
-      clearControls() %>%
+      #clearControls() %>%
       addLegend(position = "bottomleft", 
-                pal = pal,
-                values = prange,
+                colors = color,
+                #values = prange,
                 title = ptitle,
-                labels = c("Much below normal", "Below normal", "Normal",
-                           "Above normal", "Much above normal"),
+                labels = plabels,
                 opacity = 1)
     
   })
