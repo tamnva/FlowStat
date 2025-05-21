@@ -84,6 +84,8 @@ function(input, output, session) {
                 pal = pal,
                 values = prange,
                 title = ptitle,
+                labels = c("Much below normal", "Below normal", "Normal",
+                           "Above normal", "Much above normal"),
                 opacity = 1)
     
   })
@@ -133,9 +135,7 @@ function(input, output, session) {
                     group = "Subbasin",
                     stroke = TRUE,
                     weight = 2,
-                    layerId = "basin_shape_id",
-                    labels = c("Much below normal", "Below normal", "Normal",
-                               "Above normal", "Much above normal")
+                    layerId = "basin_shape_id"
         )
       
     })
