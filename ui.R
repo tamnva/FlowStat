@@ -57,6 +57,11 @@ navbarPage(
                     list("NSE",
                          "Q mean period")),
         
+        dateRangeInput("date_range", 
+                       "Date range",
+                       start = "2015-01-01", 
+                       end = as.character(Sys.Date())),
+        
         plotlyOutput("input_data", height = 200),
         plotlyOutput("output_data", height = 200),
         

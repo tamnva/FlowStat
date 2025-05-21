@@ -44,7 +44,7 @@ function(input, output, session) {
       pcolor <- pal(ifelse(stations$NSE < 0, 0, stations$NSE))
       ptitle <- "NSE"
       
-    } else if (input$station_visual == "Q mean period"){
+    } else if (input$station_visual == "Q daily mean period"){
     
       pal <- colorNumeric(palette = "PiYG", 
                           domain = c(0,100), 
@@ -59,7 +59,7 @@ function(input, output, session) {
                                        stations$gauge_id)
       
       pcolor <- pal(period_stat_value$quantiles)
-      ptitle <- "Percentiles Q mean period"
+      ptitle <- "Q daily mean period (percentile)"
       prange <- c(0,100)
       
     } else {
