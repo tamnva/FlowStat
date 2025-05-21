@@ -82,19 +82,21 @@ navbarPage(
                                          end = "2015-05-18"),
                    ),
                    column(width = 10,
-                          h5("4. Visualize"),
-                          actionButton("calculate2", "Click here"),
+                          checkboxInput('visualize', 
+                                        '4. Check to visualize result', 
+                                        value = 0, width = "100%")
                    )
                  ),
                ),
         ),
         
         
-        # Temporal visualization for selected gaug
-        checkboxInput('temporal_setting', 'Temporal visualization settings (single selected gauge)', 
-                      value = 1, width = "100%"),
+
         
         column(width = 12,
+               # Temporal visualization for selected gaug
+               checkboxInput('temporal_setting', 'Temporal visualization settings (single selected gauge)', 
+                             value = 1, width = "100%"),
                conditionalPanel(
                  condition = "input.temporal_setting == 1",
                  plotlyOutput("input_data", height = 200),

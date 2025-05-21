@@ -34,11 +34,6 @@ function(input, output, session) {
 
   observe({
     
-    colorNumeric(palette = "PiYG", 
-                 domain = c(0,1), 
-                 na.color = "#ffffff")(seq(0,1,0.05))
-
-    
     if(input$station_visual == "NSE"){
       color <- c("#F1B6DA", "#B8E186",  "#4D9221", "#276419")
       pcolor <- colorBin(palette = color, bins = c(0.0, 0.5, 0.65, 0.75, 1.0))
@@ -46,14 +41,14 @@ function(input, output, session) {
       ptitle <- "NSE"
       plabels <- c("Unsatisfactory", "Satisfactory", "Good", "Very good")
       
-    } else if (input$station_visual == "Q daily mean period"){
+    } else if ((input$station_visual == "Q daily mean period") &
+               (input$visualize == 1)){
     
       color <- c("#D01C8B", "#F1B6DA", "#D0EBAB",  "#9CCE64", "#276419")
       pcolor <- colorBin(palette = color,bins = c(0, 10, 25, 75, 90, 100))
       
       # Replace with selected date
-      period <- c(as.Date("2025-04-01"), as.Date("2025-04-30"))
-      period_stat_value <- period_stat(Q_data, period, stations$gauge_id)
+      period_stat_value <- period_stat(Q_data, input$date_range, stations$gauge_id)
       
       pcolor <- pcolor(period_stat_value$quantiles)
       ptitle <- "Q daily mean period"
@@ -61,7 +56,11 @@ function(input, output, session) {
                    "Above normal", "Much above normal")
       
     } else {
-      
+      color <- c("#F1B6DA", "#B8E186",  "#4D9221", "#276419")
+      pcolor <- colorBin(palette = color, bins = c(0.0, 0.5, 0.65, 0.75, 1.0))
+      pcolor <- pcolor(ifelse(stations$NSE < 0, 0, stations$NSE))
+      ptitle <- "NSE"
+      plabels <- c("Unsatisfactory", "Satisfactory", "Good", "Very good")
     }
     
     leafletProxy("map") %>%
