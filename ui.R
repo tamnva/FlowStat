@@ -100,6 +100,8 @@ navbarPage(
                              "1. Select plot type ", 
                              list("Daily (by year)",
                                   "Daily cumsum (by year)")),
+                 checkboxInput('log_y', 'Log y axis', 
+                               value = 0, width = "100%"),
                  plotlyOutput("input_data", height = 200),
                ),
         ),

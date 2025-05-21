@@ -25,9 +25,9 @@ Q_data$date <- as.Date(Q_data$date)
 #                                Daily plot by years                           #
 #                https://waterwatch.usgs.gov/index.php?id=ww_past              #
 #------------------------------------------------------------------------------#
-daily_stat <- function(input_data, gaugeid, plot_type){ 
+daily_stat <- function(input_data, gaugeid, plot_type, log_y){ 
   #input_data <- Q_data
-  #gaugeid <-  "DE210310" 
+  #gaugeid <-  "DEA11100" 
   Q_gauge_id <- input_data %>% 
     filter(gauge_id == gaugeid)
   
@@ -97,7 +97,6 @@ daily_stat <- function(input_data, gaugeid, plot_type){
                   filter(year(date) == current_year) %>%
                   rename(Q_current_year = Q_cms),
                 aes(x = date, y = Q_current_year), color = "#CC79A7") +
-      scale_y_log10() +
       labs(y = "Q (cms)", x = " ") +
       theme_bw()
     
@@ -114,10 +113,11 @@ daily_stat <- function(input_data, gaugeid, plot_type){
                   filter(year(date) == current_year) %>%
                   rename(Q_current_year = Q_cms),
                 aes(x = date, y = cumsum(Q_current_year)), color = "#CC79A7") +
-      scale_y_log10() +
       labs(y = "Q (cms)", x = " ") +
       theme_bw()
   }
+  
+  if (log_y == 1) plt <- plt + scale_y_log10() 
   
   return(plt)
 }

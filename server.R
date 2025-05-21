@@ -103,6 +103,7 @@ function(input, output, session) {
     
     req(input$map_marker_click)
     req(input$plot_type)
+    req(!is.null(input$log_y))
     
     leafletProxy("map") %>% clearPopups()
     
@@ -117,7 +118,7 @@ function(input, output, session) {
       print(event$id)
       print(input$plot_type)
       
-      plt <- daily_stat(Q_data, event$id, input$plot_type)
+      plt <- daily_stat(Q_data, event$id, input$plot_type, input$log_y)
       output$input_data <- renderPlotly({ggplotly(plt)})
       
       leafletProxy("map") %>%
