@@ -100,6 +100,10 @@ function(input, output, session) {
 
   # When map is clicked, show a popup with city info
   observe({
+    
+    req(input$map_marker_click)
+    req(input$plot_type)
+    
     leafletProxy("map") %>% clearPopups()
     
     event <- input$map_marker_click
@@ -111,20 +115,10 @@ function(input, output, session) {
     isolate({
       #showZipcodePopup(event$id, event$lat, event$lng)
       print(event$id)
-      plt <- daily_stat(Q_data, event$id)
+      print(input$plot_type)
       
-      output$input_data <- renderPlotly({
-        ggplotly(
-          plt[["normal"]]
-        )
-      })
-      
-      output$output_data <- renderPlotly({
-        ggplotly(
-          plt[["cumsum"]]
-        )
-      })
-      
+      plt <- daily_stat(Q_data, event$id, input$plot_type)
+      output$input_data <- renderPlotly({ggplotly(plt)})
       
       leafletProxy("map") %>%
         addPolygons(data = st_geometry(subset(basins, gauge_id == event$id)),

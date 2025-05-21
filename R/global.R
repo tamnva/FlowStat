@@ -25,7 +25,7 @@ Q_data$date <- as.Date(Q_data$date)
 #                                Daily plot by years                           #
 #                https://waterwatch.usgs.gov/index.php?id=ww_past              #
 #------------------------------------------------------------------------------#
-daily_stat <- function(input_data, gaugeid){
+daily_stat <- function(input_data, gaugeid, plot_type){ 
   #input_data <- Q_data
   #gaugeid <-  "DE210310" 
   Q_gauge_id <- input_data %>% 
@@ -33,86 +33,91 @@ daily_stat <- function(input_data, gaugeid){
   
   current_year <- year(tail(Q_gauge_id$date, 1))
   
-  Q_daily_stat <- Q_gauge_id %>%
-    filter(year(date) < current_year) %>%
-    mutate(year = year(date),
-           month = month(date),
-           day = day(date)) %>%  
-    group_by(month, day) %>%
-    summarise(
-      Q_min = min(Q_cms),
-      Q_10 = quantile(Q_cms, c(0.05)),
-      Q_25 = quantile(Q_cms, c(0.25)),
-      Q_50 = quantile(Q_cms, c(0.5)),
-      Q_75 = quantile(Q_cms, c(0.75)),
-      Q_90 = quantile(Q_cms, c(0.95)),
-      Q_max = max(Q_cms),
-      .groups = 'drop'
-    )
+  if (plot_type == "Daily (by year)"){
+    Q_daily_stat <- Q_gauge_id %>%
+      filter(year(date) < current_year) %>%
+      mutate(year = year(date),
+             month = month(date),
+             day = day(date)) %>%  
+      group_by(month, day) %>%
+      summarise(
+        Q_min = min(Q_cms),
+        Q_10 = quantile(Q_cms, c(0.05)),
+        Q_25 = quantile(Q_cms, c(0.25)),
+        Q_50 = quantile(Q_cms, c(0.5)),
+        Q_75 = quantile(Q_cms, c(0.75)),
+        Q_90 = quantile(Q_cms, c(0.95)),
+        Q_max = max(Q_cms),
+        .groups = 'drop'
+      )
+  } else {
+    Q_daily_stat_cumsum <- Q_gauge_id %>%
+      filter(year(date) < current_year) %>%
+      mutate(year = year(date),
+             month = month(date),
+             day = day(date)) %>%  
+      group_by(year) %>%
+      mutate(Q_cms = cumsum(Q_cms))  %>%
+      group_by(month, day) %>%
+      summarise(
+        Q_min = min(Q_cms),
+        Q_10 = quantile(Q_cms, c(0.05)),
+        Q_25 = quantile(Q_cms, c(0.25)),
+        Q_50 = quantile(Q_cms, c(0.5)),
+        Q_75 = quantile(Q_cms, c(0.75)),
+        Q_90 = quantile(Q_cms, c(0.95)),
+        Q_max = max(Q_cms),
+        .groups = 'drop'
+      )
+  }
   
-  Q_daily_stat_cumsum <- Q_gauge_id %>%
-    filter(year(date) < current_year) %>%
-    mutate(year = year(date),
-           month = month(date),
-           day = day(date)) %>%  
-    group_by(year) %>%
-    mutate(Q_cms = cumsum(Q_cms))  %>%
-    group_by(month, day) %>%
-    summarise(
-      Q_min = min(Q_cms),
-      Q_10 = quantile(Q_cms, c(0.05)),
-      Q_25 = quantile(Q_cms, c(0.25)),
-      Q_50 = quantile(Q_cms, c(0.5)),
-      Q_75 = quantile(Q_cms, c(0.75)),
-      Q_90 = quantile(Q_cms, c(0.95)),
-      Q_max = max(Q_cms),
-      .groups = 'drop'
-    )
+
   
   date <- seq.Date(as.Date(paste0(current_year, "-01-01")),
                    as.Date(paste0(current_year, "-12-31")), by = "days")
   
   if (length(date) == 365) {
-    Q_daily_stat = Q_daily_stat[-c(60),]
-    Q_daily_stat_cumsum = Q_daily_stat_cumsum[-c(60),]
+    if (plot_type == "Daily (by year)"){
+      Q_daily_stat = Q_daily_stat[-c(60),]
+    } else {
+      Q_daily_stat_cumsum = Q_daily_stat_cumsum[-c(60),]
+    }
   }
     
   
-  Q_daily_stat <- Q_daily_stat %>%
-    mutate(date = date,
-           .before = 1) 
-  
-  Q_daily_stat_cumsum <- Q_daily_stat_cumsum %>%
-    mutate(date = date,
-           .before = 1) 
-  
-  plt <- list()
-  
-  plt[["normal"]] <- ggplot(Q_daily_stat, aes(x = date)) +
-    geom_line(aes(y = Q_50), color = "#009E73") +
-    geom_ribbon(aes(ymin = Q_25, ymax = Q_75), fill = "#009E73", alpha = 0.2) +
-    geom_ribbon(aes(ymin = Q_10, ymax = Q_90), fill = "#009E73", alpha = 0.2) +
-    geom_ribbon(aes(ymin = Q_min, ymax = Q_max), fill = "#009E73", alpha = 0.2) +
-    geom_line(data = Q_gauge_id %>% 
-                filter(year(date) == current_year) %>%
-                rename(Q_current_year = Q_cms),
-              aes(x = date, y = Q_current_year), color = "#CC79A7") +
-    scale_y_log10() +
-    labs(y = "Q (cms)", x = " ") +
-    theme_bw()
-  
-#  plt[["cumsum"]] <- ggplot(Q_daily_stat_cumsum, aes(x = date)) +
-#    geom_line(aes(y = Q_50), color = "#009E73") +
-#    geom_ribbon(aes(ymin = Q_25, ymax = Q_75), fill = "#009E73", alpha = 0.2) +
-#    geom_ribbon(aes(ymin = Q_10, ymax = Q_90), fill = "#009E73", alpha = 0.2) +
-#    geom_ribbon(aes(ymin = Q_min, ymax = Q_max), fill = "#009E73", alpha = 0.2) +
-#    geom_line(data = Q_gauge_id %>% 
-#                filter(year(date) == current_year) %>%
-#                rename(Q_current_year = Q_cms),
-#              aes(x = date, y = cumsum(Q_current_year)), color = "#CC79A7") +
-#    scale_y_log10() +
-#    labs(y = "Q (cms)", x = " ") +
-#    theme_bw()
+  if (plot_type == "Daily (by year)"){
+    Q_daily_stat <- Q_daily_stat %>% mutate(date = date, .before = 1)
+    
+    plt <- ggplot(Q_daily_stat, aes(x = date)) +
+      geom_line(aes(y = Q_50), color = "#009E73") +
+      geom_ribbon(aes(ymin = Q_25, ymax = Q_75), fill = "#009E73", alpha = 0.2) +
+      geom_ribbon(aes(ymin = Q_10, ymax = Q_90), fill = "#009E73", alpha = 0.2) +
+      geom_ribbon(aes(ymin = Q_min, ymax = Q_max), fill = "#009E73", alpha = 0.2) +
+      geom_line(data = Q_gauge_id %>% 
+                  filter(year(date) == current_year) %>%
+                  rename(Q_current_year = Q_cms),
+                aes(x = date, y = Q_current_year), color = "#CC79A7") +
+      scale_y_log10() +
+      labs(y = "Q (cms)", x = " ") +
+      theme_bw()
+    
+  } else {
+    Q_daily_stat_cumsum <- Q_daily_stat_cumsum %>% 
+      mutate(date = date, .before = 1) 
+    
+    plt <- ggplot(Q_daily_stat_cumsum, aes(x = date)) +
+      geom_line(aes(y = Q_50), color = "#009E73") +
+      geom_ribbon(aes(ymin = Q_25, ymax = Q_75), fill = "#009E73", alpha = 0.2) +
+      geom_ribbon(aes(ymin = Q_10, ymax = Q_90), fill = "#009E73", alpha = 0.2) +
+      geom_ribbon(aes(ymin = Q_min, ymax = Q_max), fill = "#009E73", alpha = 0.2) +
+      geom_line(data = Q_gauge_id %>% 
+                  filter(year(date) == current_year) %>%
+                  rename(Q_current_year = Q_cms),
+                aes(x = date, y = cumsum(Q_current_year)), color = "#CC79A7") +
+      scale_y_log10() +
+      labs(y = "Q (cms)", x = " ") +
+      theme_bw()
+  }
   
   return(plt)
 }

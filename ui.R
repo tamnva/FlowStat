@@ -90,21 +90,16 @@ navbarPage(
                ),
         ),
         
-        
-
-        
         column(width = 12,
                # Temporal visualization for selected gaug
                checkboxInput('temporal_setting', 'Temporal visualization settings (selected gauge)', 
                              value = 1, width = "100%"),
                conditionalPanel(
                  condition = "input.temporal_setting == 1",
-                 column(width = 12,
-                        selectInput("plot_type", 
-                                    "1. Select plot type ", 
-                                    list("Daily (by year)",
-                                         "Daily cumsum (by year)")),
-                 ),
+                 selectInput("plot_type", 
+                             "1. Select plot type ", 
+                             list("Daily (by year)",
+                                  "Daily cumsum (by year)")),
                  plotlyOutput("input_data", height = 200),
                ),
         ),
