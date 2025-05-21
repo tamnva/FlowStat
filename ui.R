@@ -18,6 +18,8 @@ navbarPage(
       ),
       
       # If not using custom CSS, set height of leafletOutput to a number instead of percent
+      
+      
       leafletOutput("map", 
                     width="100%", 
                     height="100%"),
@@ -39,12 +41,15 @@ navbarPage(
         
         h4("Visualization"),
         
+        
         # Select countries
         selectInput("select_country", 
                     "Country", 
                     list("Germany",
                          "Switzerland",
                          "France")),
+        add_busy_spinner(spin = "fading-circle", position = "top-left", 
+                         margins = c(70, 70)),
         
         # Select last n simulation dates
         selectInput("station_visual", 
