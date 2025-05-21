@@ -40,68 +40,62 @@ navbarPage(
         height = "auto",
         cursor = "auto",
         
-        h4(" "),
+        # Spatial visualization for all gauges
+        checkboxInput('spatial_setting', 
+                      'Spatial visualization settings (all gauges)', 
+                             value = 1, width = "100%"),
         
-        
-        # Select countries
-        
-
-        column(width = 10,
-               selectInput("select_country", 
-                           "Country", 
-                           list("Germany",
-                                "Switzerland",
-                                "France")),
-        ),
-        column(width = 2,
-               actionButton("help_country", "?", style = "margin-top: 25px;"),
-        ),
-        
-
-        
-        # Select last n simulation dates
-        column(width = 10,
-               selectInput("station_visual", 
-                           "Station coloring by", 
-                           list("NSE",
-                                "Q daily mean period")),
-        ),
-        column(width = 2,
-               actionButton("help_station", "?", style = "margin-top: 25px;"),
-        ),
-        
-        column(width = 10,
-               checkboxInput('detail_setting', 'Show details', 
-                             value = 1, width = NULL),
-        ),
-        conditionalPanel(
-          condition = "input.detail_setting == 1",
-          conditionalPanel(
-            condition = "input.station_visual.includes('NSE')",
-          ),
-          conditionalPanel(
-            condition = "input.station_visual.includes('Q daily mean period')",
-            column(width = 10,
-                   dateRangeInput("date_range", 
-                                  "Select date range",
-                                  start = "2015-04-01", 
-                                  end = "2015-05-18"),
-            ),
-            column(width = 10,
-                   actionButton("calculate2", "Apply"),
-            )
-          ),
+        # Detail settings
+        column(width = 12,
+               conditionalPanel(
+                 condition = "input.spatial_setting == 1",
+                 column(width = 10,
+                        selectInput("select_country", 
+                                    "Country", 
+                                    list("Germany",
+                                         "Switzerland",
+                                         "France")),
+                 ),
+                 
+                 column(width = 2,
+                        actionButton("help_country", "?", style = "margin-top: 25px;"),
+                 ),
+                 
+                 # Select last n simulation dates
+                 column(width = 10,
+                        selectInput("station_visual", 
+                                    "Station coloring by", 
+                                    list("NSE",
+                                         "Q daily mean period")),
+                 ),
+                 
+                 column(width = 2,
+                        actionButton("help_station", "?", style = "margin-top: 25px;"),
+                 ),
+                 
+                 conditionalPanel(
+                   condition = "input.station_visual.includes('Q daily mean period')",
+                   column(width = 10,
+                          dateRangeInput("date_range", 
+                                         "Select date range",
+                                         start = "2015-04-01", 
+                                         end = "2015-05-18"),
+                   ),
+                   column(width = 10,
+                          actionButton("calculate2", "Apply"),
+                   )
+                 ),
+               ),
         ),
         
-
+        
+        # Temporal visualization for selected gaug
+        checkboxInput('spatial_setting', 'Temporal visualization settings (single selected gauge)', 
+                      value = 1, width = "100%"),
         
         column(width = 12,
                plotlyOutput("input_data", height = 200),
-               plotlyOutput("output_data", height = 200),
-               
-               verbatimTextOutput("clicked_name"),
         ),
-
       )
     )
   ),

@@ -101,18 +101,18 @@ daily_stat <- function(input_data, gaugeid){
     labs(y = "Q (cms)", x = " ") +
     theme_bw()
   
-  plt[["cumsum"]] <- ggplot(Q_daily_stat_cumsum, aes(x = date)) +
-    geom_line(aes(y = Q_50), color = "#009E73") +
-    geom_ribbon(aes(ymin = Q_25, ymax = Q_75), fill = "#009E73", alpha = 0.2) +
-    geom_ribbon(aes(ymin = Q_10, ymax = Q_90), fill = "#009E73", alpha = 0.2) +
-    geom_ribbon(aes(ymin = Q_min, ymax = Q_max), fill = "#009E73", alpha = 0.2) +
-    geom_line(data = Q_gauge_id %>% 
-                filter(year(date) == current_year) %>%
-                rename(Q_current_year = Q_cms),
-              aes(x = date, y = cumsum(Q_current_year)), color = "#CC79A7") +
-    scale_y_log10() +
-    labs(y = "Q (cms)", x = " ") +
-    theme_bw()
+#  plt[["cumsum"]] <- ggplot(Q_daily_stat_cumsum, aes(x = date)) +
+#    geom_line(aes(y = Q_50), color = "#009E73") +
+#    geom_ribbon(aes(ymin = Q_25, ymax = Q_75), fill = "#009E73", alpha = 0.2) +
+#    geom_ribbon(aes(ymin = Q_10, ymax = Q_90), fill = "#009E73", alpha = 0.2) +
+#    geom_ribbon(aes(ymin = Q_min, ymax = Q_max), fill = "#009E73", alpha = 0.2) +
+#    geom_line(data = Q_gauge_id %>% 
+#                filter(year(date) == current_year) %>%
+#                rename(Q_current_year = Q_cms),
+#              aes(x = date, y = cumsum(Q_current_year)), color = "#CC79A7") +
+#    scale_y_log10() +
+#    labs(y = "Q (cms)", x = " ") +
+#    theme_bw()
   
   return(plt)
 }
