@@ -110,7 +110,7 @@ function(input, output, session) {
     
     isolate({
       #showZipcodePopup(event$id, event$lat, event$lng)
-      
+      print(event$id)
       plt <- daily_stat(Q_data, event$id)
       
       output$input_data <- renderPlotly({

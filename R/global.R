@@ -19,7 +19,7 @@ basins <- read_sf(file.path("data", "de_basins.shp"))
 Q_data <- as_tibble(fread(file.path("data", "de_sim_discharge.csv")))
 Q_data$date <- as.Date(Q_data$date)
 
-
+"DE210310"
 # Function to plot daily statistics
 #------------------------------------------------------------------------------#
 #                                Daily plot by years                           #
@@ -27,7 +27,7 @@ Q_data$date <- as.Date(Q_data$date)
 #------------------------------------------------------------------------------#
 daily_stat <- function(input_data, gaugeid){
   #input_data <- Q_data
-  #gaugeid <-  "DEA11100" 
+  #gaugeid <-  "DE210310" 
   Q_gauge_id <- input_data %>% 
     filter(gauge_id == gaugeid)
   
@@ -122,6 +122,10 @@ daily_stat <- function(input_data, gaugeid){
 #------------------------------------------------------------------------------#
 period_stat <- function(Q_input, period, gauge_id){
   
+  #Q_input <- Q_data
+  #period <- as.Date(c("2025-04-01", "2025-05-18"))
+  #gauge_id <- stations$gauge_id #"DE210310"
+    
   Q_input_period <- Q_input %>%
     mutate(day_of_year = yday(date),
            year = year(date)) %>%
