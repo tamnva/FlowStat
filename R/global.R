@@ -1,8 +1,4 @@
 
-
-
-# check DEE10600
-
 library(sf)
 library(leaflet)
 library(ggplot2)
@@ -18,8 +14,6 @@ setwd("C:/Users/nguyenta/Documents/GitHub/FlowStat")
 
 stations <- read_sf(file.path("data", "de_stations.shp")) 
 basins <- read_sf(file.path("data", "de_basins.shp")) 
-#rivers <- read_sf(file.path("data", "de_rivers.shp")) 
-#rivers <- st_geometry(st_transform(rivers, crs(basins)))
 Q_data <- as_tibble(fread(file.path("data", "de_sim_discharge.csv")))
 Q_data$date <- as.Date(Q_data$date)
 
@@ -162,25 +156,14 @@ period_stat <- function(Q_input, period, gauge_id){
 #    #  limits = c(0,100)
 #    #) +
 #    theme_bw()
-  
-  quantiles <- quantiles %>%
-    mutate(color = case_when(
-      quantiles <= 10 ~ "#D33F6A",
-      quantiles <= 25 ~ "#E69F00",
-      quantiles <= 50 ~ "#C1E9C1",
-      quantiles <= 75 ~ "#C1E9C1",
-      quantiles <= 100 ~ "#023903"))
 
   return(quantiles)
 }
 
 #period <- c(as.Date("2025-04-01"), as.Date("2025-04-30"))
-#Q_input <- Q_data
 #gauge_id <- stations$gauge_id
 
-#period_stat_value <- period_stat(Q_data, 
-#                                 c(as.Date("2025-04-01"), as.Date("2025-04-30")), 
-#                                 stations$gauge_id)
+#period_stat_value <- period_stat(Q_data, c(as.Date("2025-04-01"), as.Date("2025-04-30")), stations$gauge_id)
 
 #pcolor <- period_stat_value$color
 

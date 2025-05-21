@@ -35,16 +35,36 @@ function(input, output, session) {
   
   observe({
     
-    pal <- colorNumeric(palette = "PiYG", 
-                        domain = c(0,1), 
-                        na.color = "#ffffff")
+    if(input$station_visual == "NSE"){
+      prange <- c(0,1)
+      pal <- colorNumeric(palette = "PiYG", 
+                          domain = prange, 
+                          na.color = "#ffffff")
+      
+      pcolor <- pal(ifelse(stations$NSE < 0, 0, stations$NSE))
+      ptitle <- "NSE"
+      
+    } else if (input$station_visual == "Q mean period"){
     
-    # brewer.pal(n = 11, name = 'PiYG')
-    #pcolor <- period_stat(Q_data,
-    #                      c(as.Date("2025-04-01"),
-    #                        as.Date("2025-04-30")),
-    #                      stations$gauge_id)$color
-    #print(radius)
+      pal <- colorNumeric(palette = "PiYG", 
+                          domain = c(0,100), 
+                          na.color = "#ffffff")
+      
+      period <- c(as.Date("2025-04-01"), as.Date("2025-04-30"))
+      gauge_id <- stations$gauge_id
+      
+      period_stat_value <- period_stat(Q_data, 
+                                       c(as.Date("2025-04-01"), 
+                                         as.Date("2025-04-30")), 
+                                       stations$gauge_id)
+      
+      pcolor <- pal(period_stat_value$quantiles)
+      ptitle <- "Percentiles Q mean period"
+      prange <- c(0,100)
+      
+    } else {
+      
+    }
     
     leafletProxy("map") %>%
       clearShapes() %>%
@@ -53,24 +73,19 @@ function(input, output, session) {
                  lat = st_coordinates(stations)[,2],
                  radius = 3,
                  group = "Station",
-                 fillColor = ~pal(ifelse(NSE < 0, 0, NSE)),
-                 #color = pcolor$color,
+                 fillColor = pcolor,
                  fillOpacity = 0.8,
                  stroke = FALSE,
                  popup = ~ paste0(gauge_name, "; NSE = ", round(NSE,2), 
                                   "; Area (skm) = ", round(are_skm, 1)),
                  layerId = ~gauge_id
       ) %>%
+      clearControls() %>%
       addLegend(position = "bottomleft", 
                 pal = pal,
-                values = c(0,1),
-                title = "NSE",
+                values = prange,
+                title = ptitle,
                 opacity = 1)
-    
-    output$clicked_name <- renderPrint({
-      click <- input$map_marker_click
-      print(click)
-    })
     
   })
 

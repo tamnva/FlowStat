@@ -40,17 +40,17 @@ navbarPage(
         h4("Visualization"),
         
         # Select countries
-        selectInput("country", 
+        selectInput("select_country", 
                     "Country", 
                     list("Germany",
                          "Switzerland",
                          "France")),
         
         # Select last n simulation dates
-        selectInput("variable", 
-                    "Variable", 
-                    list("Streamflow (Q_cm_s)",
-                         "Precipitation (P_mm_day)")),
+        selectInput("station_visual", 
+                    "Station coloring by", 
+                    list("NSE",
+                         "Q mean period")),
         
         plotlyOutput("input_data", height = 200),
         plotlyOutput("output_data", height = 200),
