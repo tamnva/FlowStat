@@ -31,7 +31,7 @@ navbarPage(
         id = "controls", 
         class = "panel panel-default", 
         fixed = FALSE,
-        draggable = FALSE, 
+        draggable = TRUE, 
         top = 18, 
         left = "auto", 
         right = 10, 
@@ -70,16 +70,38 @@ navbarPage(
                actionButton("help_station", "?", style = "margin-top: 25px;"),
         ),
         
+        column(width = 10,
+               checkboxInput('detail_setting', 'Show details', 
+                             value = 1, width = NULL),
+        ),
+        conditionalPanel(
+          condition = "input.detail_setting == 1",
+          conditionalPanel(
+            condition = "input.station_visual.includes('NSE')",
+          ),
+          conditionalPanel(
+            condition = "input.station_visual.includes('Q daily mean period')",
+            column(width = 10,
+                   dateRangeInput("date_range", 
+                                  "Select date range",
+                                  start = "2015-04-01", 
+                                  end = "2015-05-18"),
+            ),
+            column(width = 10,
+                   actionButton("calculate2", "Apply"),
+            )
+          ),
+        ),
         
-        dateRangeInput("date_range", 
-                       "Date range",
-                       start = "2015-01-01", 
-                       end = as.character(Sys.Date())),
+
         
-        plotlyOutput("input_data", height = 200),
-        plotlyOutput("output_data", height = 200),
-        
-        verbatimTextOutput("clicked_name"),
+        column(width = 12,
+               plotlyOutput("input_data", height = 200),
+               plotlyOutput("output_data", height = 200),
+               
+               verbatimTextOutput("clicked_name"),
+        ),
+
       )
     )
   ),

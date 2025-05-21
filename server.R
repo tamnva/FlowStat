@@ -52,12 +52,11 @@ function(input, output, session) {
       period <- c(as.Date("2025-04-01"), as.Date("2025-04-30"))
       gauge_id <- stations$gauge_id
       
-      period_stat_value <- period_stat(Q_data, 
-                                       c(as.Date("2025-04-01"), 
-                                         as.Date("2025-04-30")), 
-                                       stations$gauge_id)
+      #period_stat_value <- period_stat(Q_data, 
+      #                                 input$date_range, 
+      #                                 stations$gauge_id)
       
-      pcolor <- pal(period_stat_value$quantiles)
+      pcolor <- pal(stations$NSE)#pal(period_stat_value$quantiles)
       ptitle <- "Q daily mean period (percentile)"
       prange <- c(0,100)
       
