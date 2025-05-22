@@ -32,7 +32,7 @@ function(input, output, session) {
       setView(lng = 9, lat = 50, zoom = 4)
   })
 
-  observe({
+  observeEvent(input$visualize_gauge, {
     
     if(input$station_visual == "NSE"){
       color <- c("#F1B6DA", "#B8E186",  "#4D9221", "#276419")
@@ -42,8 +42,8 @@ function(input, output, session) {
       plabels <- c("Unsatisfactory", "Satisfactory", "Good", "Very good")
       
     } else if ((input$station_visual == "Q daily mean period") &
-               (input$visualize == 1)){
-    
+               (input$visualize_gauge == 1)){
+      
       color <- c("#D01C8B", "#F1B6DA", "#D0EBAB",  "#9CCE64", "#276419")
       pcolor <- colorBin(palette = color,bins = c(0, 10, 25, 75, 90, 100))
       
@@ -63,6 +63,7 @@ function(input, output, session) {
       plabels <- c("Unsatisfactory", "Satisfactory", "Good", "Very good")
     }
     
+    print("run")
     leafletProxy("map") %>%
       clearShapes() %>%
       addCircleMarkers(data = stations,
@@ -83,7 +84,6 @@ function(input, output, session) {
                 title = ptitle,
                 labels = plabels,
                 opacity = 1)
-    
   })
 
   

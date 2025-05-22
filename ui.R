@@ -82,8 +82,8 @@ navbarPage(
                                          end = "2025-05-18"),
                    ),
                    column(width = 10,
-                          checkboxInput('visualize', 
-                                        '4. Check to visualize result', 
+                          checkboxInput('visualize_gauge', 
+                                        'Check to visualize result', 
                                         value = 0, width = "100%")
                    )
                  ),
