@@ -26,7 +26,8 @@ Q_data$date <- as.Date(Q_data$date)
 #------------------------------------------------------------------------------#
 daily_stat <- function(input_data, gaugeid, plot_type, log_y){ 
   #input_data <- Q_data
-  #gaugeid <-  "DEE10360" 
+  #gaugeid <-  "DE213680" 
+  #plot_type = "Daily (by year)"
   Q_gauge_id <- input_data %>% 
     filter(gauge_id == gaugeid)
   
@@ -67,7 +68,6 @@ daily_stat <- function(input_data, gaugeid, plot_type, log_y){
         Q_min = min(Q_cms),
         Q_10 = quantile(Q_cms, c(0.05)),
         Q_25 = quantile(Q_cms, c(0.25)),
-        Q_50 = quantile(Q_cms, c(0.5)),
         Q_75 = quantile(Q_cms, c(0.75)),
         Q_90 = quantile(Q_cms, c(0.95)),
         Q_max = max(Q_cms),
@@ -90,16 +90,17 @@ daily_stat <- function(input_data, gaugeid, plot_type, log_y){
     
   if (plot_type == "Daily (by year)"){
     Q_daily_stat <- Q_daily_stat %>% mutate(date = date, .before = 1)
-    
+
     plt <- ggplot(Q_daily_stat, aes(x = date)) +
-      geom_line(aes(y = Q_50), color = "#009E73") +
-      geom_ribbon(aes(ymin = Q_25, ymax = Q_75), fill = "#009E73", alpha = 0.2) +
-      geom_ribbon(aes(ymin = Q_10, ymax = Q_90), fill = "#009E73", alpha = 0.2) +
-      geom_ribbon(aes(ymin = Q_min, ymax = Q_max), fill = "#009E73", alpha = 0.2) +
+      geom_ribbon(aes(ymin = Q_min, ymax = Q_10), fill = "#D01C8B", alpha = 0.6) +
+      geom_ribbon(aes(ymin = Q_10, ymax = Q_25), fill = "#F1B6DA", alpha = 0.6) +
+      geom_ribbon(aes(ymin = Q_25, ymax = Q_75), fill = "#D0EBAB", alpha = 0.6) +
+      geom_ribbon(aes(ymin = Q_75, ymax = Q_90), fill = "#9CCE64", alpha = 0.6) +
+      geom_ribbon(aes(ymin = Q_90, ymax = Q_max), fill = "#276419", alpha = 0.6) +
       geom_line(data = Q_gauge_id %>% 
                   filter(year(date) == current_year) %>%
                   rename(Q_current_year = Q_cms),
-                aes(x = date, y = Q_current_year), color = "#CC79A7") +
+                aes(x = date, y = Q_current_year), color = "blue") +
       labs(y = "Q (cms)", x = " ") +
       theme_bw()
     
@@ -108,14 +109,15 @@ daily_stat <- function(input_data, gaugeid, plot_type, log_y){
       mutate(date = date, .before = 1) 
     
     plt <- ggplot(Q_daily_stat_cumsum, aes(x = date)) +
-      geom_line(aes(y = Q_50), color = "#009E73") +
-      geom_ribbon(aes(ymin = Q_25, ymax = Q_75), fill = "#009E73", alpha = 0.2) +
-      geom_ribbon(aes(ymin = Q_10, ymax = Q_90), fill = "#009E73", alpha = 0.2) +
-      geom_ribbon(aes(ymin = Q_min, ymax = Q_max), fill = "#009E73", alpha = 0.2) +
+      geom_ribbon(aes(ymin = Q_min, ymax = Q_10), fill = "#D01C8B", alpha = 0.6) +
+      geom_ribbon(aes(ymin = Q_10, ymax = Q_25), fill = "#F1B6DA", alpha = 0.6) +
+      geom_ribbon(aes(ymin = Q_25, ymax = Q_75), fill = "#D0EBAB", alpha = 0.6) +
+      geom_ribbon(aes(ymin = Q_75, ymax = Q_90), fill = "#9CCE64", alpha = 0.6) +
+      geom_ribbon(aes(ymin = Q_90, ymax = Q_max), fill = "#276419", alpha = 0.6) +
       geom_line(data = Q_gauge_id %>% 
                   filter(year(date) == current_year) %>%
                   rename(Q_current_year = Q_cms),
-                aes(x = date, y = cumsum(Q_current_year)), color = "#CC79A7") +
+                aes(x = date, y = cumsum(Q_current_year)), color = "blue") +
       labs(y = "Q (cms)", x = " ") +
       theme_bw()
   }
@@ -132,18 +134,19 @@ period_stat <- function(Q_input, period, gaugeid){
   
   #Q_input <- Q_data
   #period <- as.Date(c("2025-05-01", "2025-05-18"))
-  #gaugeid <- "DEE10360"
+  #gaugeid <- "DE213680"
     
   Q_input_period <- Q_input %>%
     mutate(day_of_year = yday(date),
            year = year(date)) %>%
     filter(day_of_year >= yday(yday(period[1])),
-           day_of_year <= yday(period[2])) 
+           day_of_year <= yday(period[2])) %>% 
+    group_by(gauge_id, year)  %>% 
+    summarise(Q_cms_mean = mean(Q_cms))
+  
   
   Q_input_year <- Q_input_period %>% 
-    filter(year == year(period[1])) %>% 
-    group_by(gauge_id)  %>% 
-    summarise(Q_cms_mean = mean(Q_cms))
+    filter(year == year(period[1])) 
   
   quantiles <- tibble(gauge_id = gaugeid, quantiles = NA)
   
@@ -153,7 +156,7 @@ period_stat <- function(Q_input, period, gaugeid){
     
     temp <- Q_input_period %>% 
       filter(gauge_id == gaugeid[i]) %>%
-      summarise(quantiles = 100*ecdf(Q_cms)(Q_input_year$Q_cms_mean[iloc]))
+      summarise(quantiles = 100*ecdf(Q_cms_mean)(Q_input_year$Q_cms_mean[iloc]))
     quantiles$quantiles[i] <- temp$quantiles
     
   }  
