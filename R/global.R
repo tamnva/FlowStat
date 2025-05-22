@@ -19,7 +19,6 @@ basins <- read_sf(file.path("data", "de_basins.shp"))
 Q_data <- as_tibble(fread(file.path("data", "de_sim_discharge.csv")))
 Q_data$date <- as.Date(Q_data$date)
 
-"DE210310"
 # Function to plot daily statistics
 #------------------------------------------------------------------------------#
 #                                Daily plot by years                           #
@@ -50,7 +49,12 @@ daily_stat <- function(input_data, gaugeid, plot_type, log_y){
         Q_max = max(Q_cms),
         .groups = 'drop'
       )
-  } else {
+  } else if(plot_type == "Daily"){
+    plt <- ggplot(tail(Q_gauge_id, 1000), aes(x = date, y = Q_cms)) +
+      geom_line(color = "#276419", linewidth = 0.3, alpha = 0.8) +
+      labs(y = "Q (cms)", x = " ") +
+      theme_bw()
+  } else if (plot_type == "Daily cumsum (by year)"){
     Q_daily_stat_cumsum <- Q_gauge_id %>%
       filter(year(date) < current_year) %>%
       mutate(year = year(date),
@@ -79,12 +83,11 @@ daily_stat <- function(input_data, gaugeid, plot_type, log_y){
   if (length(date) == 365) {
     if (plot_type == "Daily (by year)"){
       Q_daily_stat = Q_daily_stat[-c(60),]
-    } else {
+    } else if (plot_type == "Daily cumsum (by year)"){
       Q_daily_stat_cumsum = Q_daily_stat_cumsum[-c(60),]
     }
   }
     
-  
   if (plot_type == "Daily (by year)"){
     Q_daily_stat <- Q_daily_stat %>% mutate(date = date, .before = 1)
     
@@ -100,7 +103,7 @@ daily_stat <- function(input_data, gaugeid, plot_type, log_y){
       labs(y = "Q (cms)", x = " ") +
       theme_bw()
     
-  } else {
+  } else if (plot_type == "Daily cumsum (by year)"){
     Q_daily_stat_cumsum <- Q_daily_stat_cumsum %>% 
       mutate(date = date, .before = 1) 
     
