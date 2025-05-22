@@ -12,7 +12,7 @@ library(bslib)
 #library(RColorBrewer)
 
 # Remove this
-# setwd("C:/Users/nguyenta/Documents/GitHub/FlowStat")
+ setwd("C:/Users/nguyenta/Documents/GitHub/FlowStat")
 
 stations <- read_sf(file.path("data", "de_stations.shp")) 
 basins <- read_sf(file.path("data", "de_basins.shp")) 
@@ -26,7 +26,7 @@ Q_data$date <- as.Date(Q_data$date)
 #------------------------------------------------------------------------------#
 daily_stat <- function(input_data, gaugeid, plot_type, log_y){ 
   #input_data <- Q_data
-  #gaugeid <-  "DEA11100" 
+  #gaugeid <-  "DEE10360" 
   Q_gauge_id <- input_data %>% 
     filter(gauge_id == gaugeid)
   
@@ -128,11 +128,11 @@ daily_stat <- function(input_data, gaugeid, plot_type, log_y){
 #------------------------------------------------------------------------------#
 #                               perod statistics                               #
 #------------------------------------------------------------------------------#
-period_stat <- function(Q_input, period, gauge_id){
+period_stat <- function(Q_input, period, gaugeid){
   
   #Q_input <- Q_data
-  #period <- as.Date(c("2025-04-01", "2025-05-18"))
-  #gauge_id <- stations$gauge_id #"DE210310"
+  #period <- as.Date(c("2025-05-01", "2025-05-18"))
+  #gaugeid <- "DEE10360"
     
   Q_input_period <- Q_input %>%
     mutate(day_of_year = yday(date),
@@ -145,15 +145,14 @@ period_stat <- function(Q_input, period, gauge_id){
     group_by(gauge_id)  %>% 
     summarise(Q_cms_mean = mean(Q_cms))
   
+  quantiles <- tibble(gauge_id = gaugeid, quantiles = NA)
   
-  quantiles <- tibble(gauge_id = gauge_id, quantiles = NA)
-  
-  for (i in 1:length(gauge_id)){
+  for (i in 1:length(gaugeid)){
     
-    iloc <- which(Q_input_year$gauge_id == gauge_id[i])
+    iloc <- which(Q_input_year$gauge_id == gaugeid[i])
     
     temp <- Q_input_period %>% 
-      filter(gauge_id == gauge_id[i]) %>%
+      filter(gauge_id == gaugeid[i]) %>%
       summarise(quantiles = 100*ecdf(Q_cms)(Q_input_year$Q_cms_mean[iloc]))
     quantiles$quantiles[i] <- temp$quantiles
     
@@ -161,6 +160,8 @@ period_stat <- function(Q_input, period, gauge_id){
   
   return(quantiles)
 }
+
+
 
 #period <- c(as.Date("2025-04-01"), as.Date("2025-04-30"))
 #gauge_id <- stations$gauge_id
