@@ -41,13 +41,12 @@ daily_stat <- function(input_data, gaugeid, plot_type, log_y){
              day = day(date)) %>%  
       group_by(month, day) %>%
       summarise(
-        Q_min = min(Q_cms),
-        Q_10 = quantile(Q_cms, c(0.05)),
-        Q_25 = quantile(Q_cms, c(0.25)),
-        Q_50 = quantile(Q_cms, c(0.5)),
-        Q_75 = quantile(Q_cms, c(0.75)),
-        Q_90 = quantile(Q_cms, c(0.95)),
-        Q_max = max(Q_cms),
+        min = min(Q_cms),
+        `10%` = quantile(Q_cms, c(0.05)),
+        `25%` = quantile(Q_cms, c(0.25)),
+        `75%` = quantile(Q_cms, c(0.75)),
+        `90%` = quantile(Q_cms, c(0.95)),
+        max = max(Q_cms),
         .groups = 'drop'
       )
   } else if(plot_type == "Daily"){
@@ -65,12 +64,12 @@ daily_stat <- function(input_data, gaugeid, plot_type, log_y){
       mutate(Q_cms = cumsum(Q_cms))  %>%
       group_by(month, day) %>%
       summarise(
-        Q_min = min(Q_cms),
-        Q_10 = quantile(Q_cms, c(0.05)),
-        Q_25 = quantile(Q_cms, c(0.25)),
-        Q_75 = quantile(Q_cms, c(0.75)),
-        Q_90 = quantile(Q_cms, c(0.95)),
-        Q_max = max(Q_cms),
+        min = min(Q_cms),
+        `10%` = quantile(Q_cms, c(0.05)),
+        `25%` = quantile(Q_cms, c(0.25)),
+        `75%` = quantile(Q_cms, c(0.75)),
+        `90%` = quantile(Q_cms, c(0.95)),
+        max = max(Q_cms),
         .groups = 'drop'
       )
   }
@@ -92,11 +91,11 @@ daily_stat <- function(input_data, gaugeid, plot_type, log_y){
     Q_daily_stat <- Q_daily_stat %>% mutate(date = date, .before = 1)
 
     plt <- ggplot(Q_daily_stat, aes(x = date)) +
-      geom_ribbon(aes(ymin = Q_min, ymax = Q_10), fill = "#D01C8B", alpha = 0.6) +
-      geom_ribbon(aes(ymin = Q_10, ymax = Q_25), fill = "#F1B6DA", alpha = 0.6) +
-      geom_ribbon(aes(ymin = Q_25, ymax = Q_75), fill = "#D0EBAB", alpha = 0.6) +
-      geom_ribbon(aes(ymin = Q_75, ymax = Q_90), fill = "#9CCE64", alpha = 0.6) +
-      geom_ribbon(aes(ymin = Q_90, ymax = Q_max), fill = "#276419", alpha = 0.6) +
+      geom_ribbon(aes(ymin = min, ymax = `10%`), fill = "#D01C8B", alpha = 0.6) +
+      geom_ribbon(aes(ymin = `10%`, ymax = `25%`), fill = "#F1B6DA", alpha = 0.6) +
+      geom_ribbon(aes(ymin = `25%`, ymax = `75%`), fill = "#D0EBAB", alpha = 0.6) +
+      geom_ribbon(aes(ymin = `75%`, ymax = `90%`), fill = "#9CCE64", alpha = 0.6) +
+      geom_ribbon(aes(ymin = `90%`, ymax = max), fill = "#276419", alpha = 0.6) +
       geom_line(data = Q_gauge_id %>% 
                   filter(year(date) == current_year) %>%
                   rename(Q_current_year = Q_cms),
@@ -109,11 +108,11 @@ daily_stat <- function(input_data, gaugeid, plot_type, log_y){
       mutate(date = date, .before = 1) 
     
     plt <- ggplot(Q_daily_stat_cumsum, aes(x = date)) +
-      geom_ribbon(aes(ymin = Q_min, ymax = Q_10), fill = "#D01C8B", alpha = 0.6) +
-      geom_ribbon(aes(ymin = Q_10, ymax = Q_25), fill = "#F1B6DA", alpha = 0.6) +
-      geom_ribbon(aes(ymin = Q_25, ymax = Q_75), fill = "#D0EBAB", alpha = 0.6) +
-      geom_ribbon(aes(ymin = Q_75, ymax = Q_90), fill = "#9CCE64", alpha = 0.6) +
-      geom_ribbon(aes(ymin = Q_90, ymax = Q_max), fill = "#276419", alpha = 0.6) +
+      geom_ribbon(aes(ymin = min, ymax = `10%`), fill = "#D01C8B", alpha = 0.6) +
+      geom_ribbon(aes(ymin = `10%`, ymax = `25%`), fill = "#F1B6DA", alpha = 0.6) +
+      geom_ribbon(aes(ymin = `25%`, ymax = `75%`), fill = "#D0EBAB", alpha = 0.6) +
+      geom_ribbon(aes(ymin = `75%`, ymax = `90%`), fill = "#9CCE64", alpha = 0.6) +
+      geom_ribbon(aes(ymin = `90%`, ymax = max), fill = "#276419", alpha = 0.6) +
       geom_line(data = Q_gauge_id %>% 
                   filter(year(date) == current_year) %>%
                   rename(Q_current_year = Q_cms),
