@@ -98,8 +98,8 @@ daily_stat <- function(input_data, gaugeid, plot_type, log_y){
       geom_ribbon(aes(ymin = `90%`, ymax = max), fill = "#276419", alpha = 0.6) +
       geom_line(data = Q_gauge_id %>% 
                   filter(year(date) == current_year) %>%
-                  rename(Q_current_year = Q_cms),
-                aes(x = date, y = Q_current_year), color = "blue") +
+                  rename(`Q current year` = Q_cms),
+                aes(x = date, y = `Q current year`), color = "blue") +
       labs(y = "Q (cms)", x = " ") +
       theme_bw()
     
@@ -115,8 +115,8 @@ daily_stat <- function(input_data, gaugeid, plot_type, log_y){
       geom_ribbon(aes(ymin = `90%`, ymax = max), fill = "#276419", alpha = 0.6) +
       geom_line(data = Q_gauge_id %>% 
                   filter(year(date) == current_year) %>%
-                  rename(Q_current_year = Q_cms),
-                aes(x = date, y = cumsum(Q_current_year)), color = "blue") +
+                  rename(`Q current year` = Q_cms),
+                aes(x = date, y = cumsum(`Q current year`)), color = "blue") +
       labs(y = "Q (cms)", x = " ") +
       theme_bw()
   }
