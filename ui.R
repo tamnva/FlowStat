@@ -103,7 +103,7 @@ navbarPage(
                                   "Daily cumsum (by year)")),
                  checkboxInput('log_y', 'Log y axis', 
                                value = 0, width = "100%"),
-                 plotlyOutput("input_data", height = 200),
+                 plotlyOutput("input_data", height = 400),
                ),
         ),
       ),

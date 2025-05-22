@@ -103,22 +103,35 @@ daily_stat <- function(input_data, gaugeid, plot_type, log_y){
       labs(y = "Q (cms)", x = " ") +
       theme_bw()
     
+    
   } else if (plot_type == "Daily cumsum (by year)"){
     Q_daily_stat_cumsum <- Q_daily_stat_cumsum %>% 
       mutate(date = date, .before = 1) 
     
     plt <- ggplot(Q_daily_stat_cumsum, aes(x = date)) +
-      geom_ribbon(aes(ymin = min, ymax = `10%`), fill = "#D01C8B", alpha = 0.6) +
-      geom_ribbon(aes(ymin = `10%`, ymax = `25%`), fill = "#F1B6DA", alpha = 0.6) +
-      geom_ribbon(aes(ymin = `25%`, ymax = `75%`), fill = "#D0EBAB", alpha = 0.6) +
-      geom_ribbon(aes(ymin = `75%`, ymax = `90%`), fill = "#9CCE64", alpha = 0.6) +
-      geom_ribbon(aes(ymin = `90%`, ymax = max), fill = "#276419", alpha = 0.6) +
+      geom_ribbon(aes(ymin = min, ymax = `10%`, fill = "Much below normal"), alpha = 0.6) +
+      geom_ribbon(aes(ymin = `10%`, ymax = `25%`, fill = "Below normal"), alpha = 0.6) +
+      geom_ribbon(aes(ymin = `25%`, ymax = `75%`, fill = "Normal"), alpha = 0.6) +
+      geom_ribbon(aes(ymin = `75%`, ymax = `90%`, fill = "Above normal"), alpha = 0.6) +
+      geom_ribbon(aes(ymin = `90%`, ymax = max, fill = "Much above normal"), alpha = 0.6) +
       geom_line(data = Q_gauge_id %>% 
                   filter(year(date) == current_year) %>%
                   rename(`Q current year` = Q_cms),
                 aes(x = date, y = cumsum(`Q current year`)), color = "blue") +
-      labs(y = "Q (cms)", x = " ") +
-      theme_bw()
+      scale_fill_manual(values =  c("Much below normal" = "#D01C8B", 
+                                    "Below normal" = "#F1B6DA" , 
+                                    "Normal" = "#D0EBAB", 
+                                    "Above normal" = "#9CCE64", 
+                                    "Much above normal" = "#276419"),
+                        breaks = c("Much above normal",
+                                   "Above normal",
+                                   "Normal", 
+                                   "Below normal",
+                                   "Much below normal" )) +
+    labs(y = "Q (cms)", x = " ") + 
+      theme_bw() + 
+      theme(legend.position = "bottom", legend.title = element_blank())
+    
   }
   
   if (log_y == 1) plt <- plt + scale_y_log10() 
