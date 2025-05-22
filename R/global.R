@@ -12,7 +12,7 @@ library(bslib)
 #library(RColorBrewer)
 
 # Remove this
-setwd("C:/Users/nguyenta/Documents/GitHub/FlowStat")
+# setwd("C:/Users/nguyenta/Documents/GitHub/FlowStat")
 
 stations <- read_sf(file.path("data", "de_stations.shp")) 
 basins <- read_sf(file.path("data", "de_basins.shp")) 
@@ -156,18 +156,6 @@ period_stat <- function(Q_input, period, gauge_id){
     
   }  
   
-#  ggplot(quantiles, aes(x = "", y = quantiles)) +
-#    geom_violin(fill = "skyblue", color = "black", alpha = 0.5) +
-#    geom_boxplot(width = 0.1, fill = "white", alpha = 0.5) +
-#    labs(title = " ", y = "Number of gauges", x = "") +
-#    #scale_y_continuous(
-#    #  breaks = c(10, 25, 50, 75, 90),
-#    #  labels = c("Much below normal (10%)", "Below normal (20%)", "Normal (50%)", 
-#    #             "Above normal (75%)", "Much above normal (90%)"),
-#    #  limits = c(0,100)
-#    #) +
-#    theme_bw()
-
   return(quantiles)
 }
 
@@ -185,3 +173,7 @@ period_stat <- function(Q_input, period, gauge_id){
 #"#492050" "#90529C" "#C490CF" "#E4CAE9" "#F1F1F1" "#BCDABC" "#72B173" "#2C792D" "#023903"
 #"#4A6FE3" "#788CE1" "#9DA8E2" "#C0C5E3" "#E2E2E2" "#E6BCC3" "#E495A5" "#DD6D87" "#D33F6A"
 #"#841859" "#D05196" "#F398C4" "#FFD0E8" "#F6F6F6" "#C1E9C1" "#7CC57D" "#129416" "#005600"
+
+#colnames(Q_data) <- c("STATION_NUMBER", "Date", "Value")
+#calc_annual_lowflows(data = Q_data %>% filter(STATION_NUMBER == "DE110000",
+#                                              Date > as.Date("2000-01-01")))
